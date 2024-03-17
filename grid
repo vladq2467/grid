@@ -1,0 +1,114 @@
+<?php
+
+Loc::loadLanguageFile(__FILE__);
+
+class AppConsolidationCountersListComponent extends CBitrixComponent implements Controllerable
+{
+
+    public function executeComponent()
+    {
+        $this->getGridAndFilter();
+        $this->includeComponentTemplate();
+    }
+
+    private function getLang()
+    {
+        $this->columns = [
+            //массив с колонками
+        ];
+    }
+
+    protected function getGridAndFilter()
+    {
+        $this->getLang();
+        $grid_options = new Bitrix\Main\Grid\Options('******');
+        $sort = $grid_options->GetSorting();
+        if (empty($sort['sort'])) {
+            $sort['sort'] = ['ID' => 'DESC'];
+        }
+        $nav_params = $grid_options->GetNavParams();
+
+        $nav = new \Bitrix\Main\UI\PageNavigation('******');
+        $nav->allowAllRecords(false)
+            ->setPageSize($nav_params['nPageSize'])
+            ->initFromUri();
+
+        $filterOption = new Bitrix\Main\UI\Filter\Options('******');
+        $filterData = $filterOption->getFilter();
+
+        $filter = [
+            //основной фильтр запрооса
+        ];
+
+        // поиск!
+        if (!empty($filterData['FIND'])) {
+            $filter[] = [
+                //фильтр при не пустом поиске
+            ];
+        }
+
+        if (!empty($filterData[*******])) {
+              // изменения фильтра запроса в зависимости от выбранного пользователем фильтра
+        }
+        
+        //$order
+        $runtime = [
+           // основной runtime запроса
+        ];
+
+        if ($sort['sort'][*********]) {
+            $runtime[] =
+                // runtime по условию
+        }
+
+        $dbList = ***********::getList(
+            [
+                'order'       => $order,
+                'count_total' => true,
+                'filter'      => $filter,
+                'limit'       => $nav->getLimit(),
+                'offset'      => $nav->getOffset(),
+                'runtime'     => $runtime,
+                'group'       => ['ID'],
+                'select'      => [
+					//что-то забираем
+                ],
+            ]
+        );
+        $count = $dbList->getCount();
+        $nav->setRecordCount($count);
+
+        $arData = $dbList->fetchAll();
+        
+		//формирования строк и действий
+
+        $this->data = $rows;
+
+        $this->arResult['LIST_GRID'] = [
+            //формирование штатного компонента для вывода грида
+        ];
+        $this->arResult['LIST_FILTER'] = [
+            //формирование штатного компонента фильтра
+        ];
+    }
+
+    public function configureActions() // инициируем действие
+    {
+        return [
+            'sendNotification' => [
+                'prefilters' => [
+                    new ActionFilter\Csrf(),
+                    new ActionFilter\HttpMethod(['POST']),
+                    new ActionFilter\Authentication(),
+                ],
+            ],
+        ];
+    }
+
+    public function sendNotificationAction()
+    {
+        //что-то происходит
+
+        return ['status' => 'success'];
+    }
+}
